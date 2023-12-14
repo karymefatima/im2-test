@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <title>Organizers</title>
+</head>
+<body>
+    <h1>Organizers</h1>
+        <!-- Add New Organizer Button -->
+        <button id="addOrganizer" onclick="document.getElementById('newOrganizerForm').style.display='block'">Add New Organizer</button>
+
+        <!-- New Organizer Form -->
+        <div id="newOrganizerForm" style="display:none">
+            <h1>Create Organizer</h1>
+            <form action="/organizersui" method="post">
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name"><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email"><br>
+                <label for="contact_number">Contact Number:</label><br>
+                <input type="text" id="contact_number" name="contact_number"><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <script>
+            window.onload = function() {
+                if (window.performance.navigation.type === 2) {  // if the page was loaded via a redirect
+                    alert("New organizer added successfully!");
+                }
+            };
+        </script>
+        
+    <!-- List all organizers -->
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Contact Number</th>
+            <th>Actions</th>
+        </tr>
+        {% for organizer in organizers %}
+        <tr>
+            <td>{{ organizer.name }}</td>
+            <td>{{ organizer.email }}</td>
+            <td>{{ organizer.contact_number }}</td>
+            <td>
+                <button onclick="updateOrganizer({{ organizer.organizer_id }})">Update</button>
+                <button onclick="confirmDelete({{ organizer.organizer_id }})">Delete</button>
+            </td>
+            
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        function updateOrganizer(id) {
+            window.location.href = `/organizers/update/${id}`;
+        }
+    </script>
+
+<script>
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this organizer?")) {
+            deleteOrganizer(id);
+        }
+    }
+
+    function deleteOrganizer(id) {
+        fetch(`/organizers/${id}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Delete successful');
+            location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>
+

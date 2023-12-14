@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 from flask_mysqldb import MySQL
 from attendees import create_attendee, get_event_attendees, get_attendee, update_attendee, delete_attendee
 from events import create_event, get_events, get_event, update_event, delete_event
@@ -70,6 +70,34 @@ def organizers():
   else:
     organizers = get_organizers()
     return jsonify(organizers)
+
+##########
+@app.route("/organizersui", methods=["GET", "POST"])
+def organizers_ui():
+    if request.method == "POST":
+        name = request.form.get('name')
+        email = request.form.get('email')
+        contact_number = request.form.get('contact_number')
+        create_organizer(name, email, contact_number)  # this should now return the new organizer
+        return redirect(url_for('organizers_ui'))  # redirect to the same page
+    else:
+        organizers = get_organizers()  # function to fetch all organizers from your database
+        return render_template('organizers.html', organizers=organizers)
+
+@app.route("/organizers/update/<int:id>", methods=["GET"])
+def update_organizer_ui(id):
+    organizer = get_organizer(id)
+    return render_template('update_organizer.html', organizer=organizer)
+
+@app.route("/organizers/update/<int:id>", methods=["POST"])
+def update_organizer_record(id):
+    name = request.form.get('name')
+    email = request.form.get('email')
+    contact_number = request.form.get('contact_number')
+    update_organizer(id, name, email, contact_number)
+    return redirect(url_for('organizers_ui'))
+
+##########
 
 @app.route("/organizers/<int:id>", methods=["GET", "PUT", "DELETE"])
 def organizer(id):

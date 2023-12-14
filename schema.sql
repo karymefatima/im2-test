@@ -1,22 +1,22 @@
-CREATE TABLE `persons` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(200) NOT NULL DEFAULT '',
-  `age` int NOT NULL,
-  `occupation` varchar(200) DEFAULT NULL,
-  `email` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE tblpersons (
+  id int unsigned NOT NULL AUTO_INCREMENT,
+  name varchar(200) NOT NULL DEFAULT '',
+  age int NOT NULL,
+  occupation varchar(200) DEFAULT NULL,
+  email varchar(200) DEFAULT NULL,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `users` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `person_id` int NOT NULL,
-  `username` varchar(200) NOT NULL DEFAULT '',
-  `password` varchar(200) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+CREATE TABLE tblusers (
+  id int unsigned NOT NULL AUTO_INCREMENT,
+  person_id int NOT NULL,
+  username varchar(200) NOT NULL DEFAULT '',
+  password varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE dbeventmanagement.tblorganizers (
-    organizer_id INT PRIMARY KEY,
+    organizer_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
     email VARCHAR(255),
     contact_number VARCHAR(20)
@@ -57,8 +57,8 @@ SELECT
   u.id,
   u.username,
   u.password
-FROM persons p
-INNER JOIN users u ON u.person_id = p.id;
+FROM tblpersons p
+INNER JOIN tblusers u ON u.person_id = p.id;
 
 DELIMITER $$
 CREATE PROCEDURE create_user(
@@ -71,9 +71,9 @@ CREATE PROCEDURE create_user(
 )
 BEGIN
   DECLARE v_person_id int;
-  INSERT INTO persons(name, age, occupation, email) VALUES(p_name, p_age, p_occupation, p_email);
+  INSERT INTO tblpersons(name, age, occupation, email) VALUES(p_name, p_age, p_occupation, p_email);
   SET v_person_id = LAST_INSERT_ID();
-  INSERT INTO users(person_id, username, password) VALUES(v_person_id, p_username, p_password);
+  INSERT INTO tblusers(person_id, username, password) VALUES(v_person_id, p_username, p_password);
   SELECT LAST_INSERT_ID() AS id;
 END$$
 DELIMITER ;
@@ -89,11 +89,11 @@ CREATE PROCEDURE update_user(
   IN p_password varchar(200)
 )
 BEGIN
-  UPDATE persons
-  INNER JOIN users ON users.person_id = persons.id
+  UPDATE tblpersons
+  INNER JOIN tblusers ON tblusers.person_id = tblpersons.id
   SET name = p_name, age = p_age, occupation = p_occupation, email = p_email
-  WHERE users.id = user_id;
-  UPDATE users SET username = p_username, password = p_password
+  WHERE tblusers.id = user_id;
+  UPDATE tblusers SET username = p_username, password = p_password
   WHERE id = user_id;
   SELECT user_id AS id;
 END$$
@@ -102,8 +102,8 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE delete_user(IN user_id int)
 BEGIN
-  DELETE FROM persons WHERE id = (SELECT person_id FROM users WHERE id = user_id);
-  DELETE FROM users WHERE id = user_id;
+  DELETE FROM tblpersons WHERE id = (SELECT person_id FROM users WHERE id = user_id);
+  DELETE FROM tblusers WHERE id = user_id;
   SELECT user_id AS id;
 END$$
 DELIMITER ;
