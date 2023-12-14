@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<head>
+    <title>Venues</title>
+</head>
+<body>
+    <h1>Venues</h1>
+        <!-- Add New Venue Button -->
+        <button id="addVenue" onclick="document.getElementById('newVenueForm').style.display='block'">Add New Venue</button>
+
+        <!-- New Venue Form -->
+        <div id="newVenueForm" style="display:none">
+            <h1>Create Venue</h1>
+            <form action="/venues" method="post">
+                <label for="venue_name">Venue Name:</label><br>
+                <input type="text" id="venue_name" name="venue_name"><br>
+                <label for="location">Location:</label><br>
+                <input type="text" id="location" name="location"><br>
+                <label for="capacity">Capacity:</label><br>
+                <input type="number" id="capacity" name="capacity"><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <script>
+            window.onload = function() {
+                if (window.performance.navigation.type === 2) {  // if the page was loaded via a redirect
+                    alert("New venue added successfully!");
+                }
+            };
+        </script>
+        
+    <!-- List all venues -->
+    <table>
+        <tr>
+            <th>Venue Name</th>
+            <th>Location</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+        </tr>
+        {% for venue in venues %}
+        <tr>
+            <td>{{ venue.venue_name }}</td>
+            <td>{{ venue.location }}</td>
+            <td>{{ venue.capacity }}</td>
+            <td>
+                <button onclick="updateVenue({{ venue.venue_id }})">Update</button>
+                <button onclick="confirmDelete({{ venue.venue_id }})">Delete</button>
+            </td>
+            
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        function updateVenue(id) {
+            window.location.href = `/venues/update/${id}`;
+        }
+    </script>
+
+<script>
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this venue?")) {
+            deleteVenue(id);
+        }
+    }
+
+    function deleteVenue(id) {
+        fetch(`/venues/${id}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Delete successful');
+            location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

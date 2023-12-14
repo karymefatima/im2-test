@@ -311,3 +311,18 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- Trigger to count attendees for an event
+DELIMITER $$
+CREATE TRIGGER count_event_attendees
+AFTER INSERT ON dbeventmanagement.tblattendees
+FOR EACH ROW
+BEGIN
+  DECLARE attendee_count INT;
+  SELECT COUNT(*) INTO attendee_count
+  FROM dbeventmanagement.tblattendees
+  WHERE event_id = NEW.event_id;
+  UPDATE dbeventmanagement.tblevents
+  SET attendee_count = attendee_count
+  WHERE event_id = NEW.event_id;
+END$$
+DELIMITER ;
