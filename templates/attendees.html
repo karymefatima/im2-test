@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<head>
+    <title>Attendees</title>
+</head>
+<body>
+    <h1>Attendees</h1>
+        <!-- Add New Attendee Button -->
+        <button id="addAttendee" onclick="document.getElementById('newAttendeeForm').style.display='block'">Add New Attendee</button>
+
+        <!-- New Attendee Form -->
+        <div id="newAttendeeForm" style="display:none">
+            <h1>Create Attendee</h1>
+            <form action="/attendees" method="post">
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name" required><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br>
+                <label for="contact_number">Contact Number:</label><br>
+                <input type="number" id="contact_number" name="contact_number" required><br>
+                <label for="event_id">Event ID:</label><br>
+                <input type="number" id="event_id" name="event_id" required><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <script>
+            window.onload = function() {
+                if (window.performance.navigation.type === 2) {  // if the page was loaded via a redirect
+                    alert("New attendee added successfully!");
+                }
+            };
+        </script>
+        
+    <!-- List all attendees -->
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Contact Number</th>
+            <th>Actions</th>
+        </tr>
+        {% for attendee in attendees %}
+        <tr>
+            <td>{{ attendee.name }}</td>
+            <td>{{ attendee.email }}</td>
+            <td>{{ attendee.contact_number }}</td>
+            <td>
+                <button onclick="updateAttendee({{ attendee.attendee_id }})">Update</button>
+                <button onclick="confirmDelete({{ attendee.attendee_id }})">Delete</button>
+            </td>
+            
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        function updateAttendee(id) {
+            window.location.href = `/attendees/update/${id}`;
+        }
+    </script>
+
+<script>
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this attendee?")) {
+            deleteAttendee(id);
+        }
+    }
+
+    function deleteAttendee(id) {
+        fetch(`/attendees/${id}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Delete successful');
+            location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

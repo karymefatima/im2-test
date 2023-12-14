@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Venue</title>
+</head>
+<body>
+    <form action="/venues/update/{{ venue.venue_id }}" method="post" onsubmit="return confirmUpdate()">
+        <label for="venue_name">Venue Name:</label><br>
+        <input type="text" id="venue_name" name="venue_name" value="{{ venue.venue_name }}"><br>
+        <label for="location">Location:</label><br>
+        <input type="text" id="location" name="location" value="{{ venue.location }}"><br>
+        <label for="capacity">Capacity:</label><br>
+        <input type="number" id="capacity" name="capacity" value="{{ venue.capacity }}"><br>
+        <input type="submit" value="Update Record">
+    </form>
+
+    <script>
+        function confirmUpdate() {
+            return confirm("Are you sure you want to save changes?");
+        }
+    </script>
+</body>
+</html>
