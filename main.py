@@ -58,8 +58,8 @@ def user(id):
   else:
     user = get_user(id)
     return jsonify(user)
-  
-@app.route("/organizers", methods=["GET", "POST"])
+
+@app.route("/organizersjson", methods=["GET", "POST"])
 def organizers():
   if request.method == "POST":
     data = request.get_json()
@@ -71,8 +71,7 @@ def organizers():
     organizers = get_organizers()
     return jsonify(organizers)
 
-##########
-@app.route("/organizersui", methods=["GET", "POST"])
+@app.route("/organizers", methods=["GET", "POST"])
 def organizers_ui():
     if request.method == "POST":
         name = request.form.get('name')
@@ -97,8 +96,6 @@ def update_organizer_record(id):
     update_organizer(id, name, email, contact_number)
     return redirect(url_for('organizers_ui'))
 
-##########
-
 @app.route("/organizers/<int:id>", methods=["GET", "PUT", "DELETE"])
 def organizer(id):
   if request.method == "PUT":
@@ -115,7 +112,8 @@ def organizer(id):
     organizer = get_organizer(id)
     return jsonify(organizer)
 
-@app.route("/venues", methods=["GET", "POST"])
+
+@app.route("/venuesjson", methods=["GET", "POST"])
 def venues():
   if request.method == "POST":
     data = request.get_json()
@@ -126,6 +124,33 @@ def venues():
   else:
     venues = get_venues()
     return jsonify(venues)
+
+
+@app.route("/venues", methods=["GET", "POST"])
+def venues_ui():
+    if request.method == "POST":
+        venue_name = request.form.get('venue_name')
+        location = request.form.get('location')
+        capacity = request.form.get('capacity')
+        create_venue(venue_name, location, capacity)
+        return redirect(url_for('venues_ui'))
+    else:
+        venues = get_venues()
+        return render_template('venues.html', venues=venues)
+
+@app.route("/venues/update/<int:id>", methods=["GET"])
+def update_venue_ui(id):
+    venue = get_venue(id)
+    return render_template('update_venue.html', venue=venue)
+
+@app.route("/venues/update/<int:id>", methods=["POST"])
+def update_venue_record(id):
+    venue_name = request.form.get('venue_name')
+    location = request.form.get('location')
+    capacity = request.form.get('capacity')
+    update_venue(id, venue_name, location, capacity)
+    return redirect(url_for('venues_ui'))
+
 
 @app.route("/venues/<int:venue_id>", methods=["GET", "PUT", "DELETE"])
 def venue(venue_id):
@@ -143,7 +168,7 @@ def venue(venue_id):
     venue = get_venue(venue_id)
     return jsonify(venue)
 
-@app.route("/events", methods=["GET", "POST"])
+@app.route("/eventsjson", methods=["GET", "POST"])
 def events():
   if request.method == "POST":
     data = request.get_json()
@@ -155,6 +180,33 @@ def events():
   else:
     events = get_events()
     return jsonify(events)
+
+@app.route("/events", methods=["GET", "POST"])
+def events_ui():
+    if request.method == "POST":
+        event_name = request.form.get('event_name')
+        event_date = request.form.get('event_date')
+        venue_id = request.form.get('venue_id')
+        organizer_id = request.form.get('organizer_id')
+        create_event(event_name, event_date, venue_id, organizer_id)
+        return redirect(url_for('events_ui'))
+    else:
+        events = get_events()
+        return render_template('events.html', events=events)
+
+@app.route("/events/update/<int:id>", methods=["GET"])
+def update_event_ui(id):
+    event = get_event(id)
+    return render_template('update_event.html', event=event)
+
+@app.route("/events/update/<int:id>", methods=["POST"])
+def update_event_record(id):
+    event_name = request.form.get('event_name')
+    event_date = request.form.get('event_date')
+    venue_id = request.form.get('venue_id')
+    organizer_id = request.form.get('organizer_id')
+    update_event(id, event_name, event_date, venue_id, organizer_id)
+    return redirect(url_for('events_ui'))
 
 @app.route("/events/<int:event_id>", methods=["GET", "PUT", "DELETE"])
 def event(event_id):
@@ -173,7 +225,7 @@ def event(event_id):
     event = get_event(event_id)
     return jsonify(event)
 
-@app.route("/attendees", methods=["GET", "POST"])
+@app.route("/attendeesjson", methods=["GET", "POST"])
 def attendees():
   if request.method == "POST":
     data = request.get_json()
@@ -184,6 +236,33 @@ def attendees():
   else:
     attendees = get_event_attendees()
     return jsonify(attendees)
+  
+@app.route("/attendees", methods=["GET", "POST"])
+def attendees_ui():
+    if request.method == "POST":
+        name = request.form.get('name')
+        email = request.form.get('email')
+        contact_number = request.form.get('contact_number')
+        event_id = request.form.get('event_id')
+        create_attendee(event_id,name, email, contact_number)  # this should now return the new attendee
+        return redirect(url_for('attendees_ui'))  # redirect to the same page
+    else:
+        attendees = get_event_attendees()  # function to fetch all attendees from your database
+        return render_template('attendees.html', attendees=attendees)
+
+@app.route("/attendees/update/<int:id>", methods=["GET"])
+def update_attendee_ui(id):
+    attendee = get_attendee(id)
+    return render_template('update_attendee.html', attendee=attendee)
+
+@app.route("/attendees/update/<int:id>", methods=["POST"])
+def update_attendee_record(id):
+    name = request.form.get('name')
+    email = request.form.get('email')
+    contact_number = request.form.get('contact_number')
+    update_attendee(id, name, email, contact_number)
+    return redirect(url_for('attendees_ui'))
+
 
 @app.route("/attendees/<int:id>", methods=["GET", "PUT", "DELETE"])
 def attendee(id):
