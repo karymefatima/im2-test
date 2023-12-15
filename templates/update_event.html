@@ -9,10 +9,17 @@
         <input type="text" id="event_name" name="event_name" value="{{ event.event_name }}"><br>
         <label for="event_date">Event Date:</label><br>
         <input type="date" id="event_date" name="event_date" value="{{ event.event_date }}"><br>
-        <label for="venue_id">Venue ID:</label><br>
-        <input type="number" id="venue_id" name="venue_id" value="{{ event.venue_id }}" required><br>
-        <label for="organizer_id">Organizer ID:</label><br>
-        <input type="number" id="organizer_id" name="organizer_id" value="{{ event.organizer_id }}" required><br>
+
+        <label for="venue_id">Venue:</label><br>
+        <select id="venue_id" name="venue_id" required>
+             <!-- options in Javascript-->
+        </select><br>
+
+        <label for="organizer_id">Organizer:</label><br>
+        <select id="organizer_id" name="organizer_id" required>
+            <!-- options in Javascript-->
+        </select><br>
+
         <input type="submit" value="Update Record">
     </form>
 
@@ -21,5 +28,51 @@
             return confirm("Are you sure you want to save changes?");
         }
     </script>
+
+<script>
+    fetch('/venuesjson')
+    .then(response => response.json())
+    .then(venues => {
+        const venueSelect = document.getElementById('venue_id');
+        const currentVenueName = "{{ event.venue_name }}";
+
+        venues.forEach(venue => {
+            const option = document.createElement('option');
+            option.value = venue.venue_id;
+            option.text = venue.venue_name;
+
+            if (venue.venue_name === currentVenueName) {
+                option.selected = true;
+            }
+
+            venueSelect.appendChild(option);
+        });
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
+fetch('/organizersjson')
+    .then(response => response.json())
+    .then(organizers => {
+        const organizerSelect = document.getElementById('organizer_id');
+        const currentOrganizerName = "{{ event.organizer_name }}";
+
+        organizers.forEach(organizer => {
+            const option = document.createElement('option');
+            option.value = organizer.organizer_id;
+            option.text = organizer.name;
+
+            if (organizer.name === currentOrganizerName) {
+                option.selected = true;
+            }
+
+            organizerSelect.appendChild(option);
+        });
+    });
+
+</script>
+
+
 </body>
 </html>
