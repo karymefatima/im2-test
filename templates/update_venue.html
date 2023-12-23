@@ -2,17 +2,96 @@
 <html>
 <head>
     <title>Update Venue</title>
+    <style>
+        :root {
+            --container-width: 600px;
+            --container-height: 100vh;
+            --border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            color: #05014a;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: var(--container-height);
+            font-family: 'Roboto', sans-serif;
+            background-image: url('https://dreamfestiva.com/images/Gallery/f5.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: rgba(255, 255, 255, .5); /* Adjust the alpha (fourth value) to set transparency */
+        }
+
+        .custom-container {
+            background-color: white;
+            width: 300px;
+            height: 350px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); /* Adding box shadow */
+            text-align: center; /* Center the content horizontally */
+            border-radius: var(--border-radius);
+        }
+
+        .inner-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 80%;
+        }
+
+        .inner-content label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .inner-content input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            border:.5px solid rgb(186, 186, 186);
+            border-radius: 5px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            width: 70%;
+            margin-top: 15px;
+            background-color: #05014a;
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 25px;
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
 </head>
 <body>
-    <form action="/venues/update/{{ venue.venue_id }}" method="post" onsubmit="return confirmUpdate()">
-        <label for="venue_name">Venue Name:</label><br>
-        <input type="text" id="venue_name" name="venue_name" value="{{ venue.venue_name }}"><br>
-        <label for="location">Location:</label><br>
-        <input type="text" id="location" name="location" value="{{ venue.location }}"><br>
-        <label for="capacity">Capacity:</label><br>
-        <input type="number" id="capacity" name="capacity" value="{{ venue.capacity }}"><br>
-        <input type="submit" value="Update Record">
-    </form>
+    <div class="custom-container">
+        <h1 class="update-title">Update Venue</h1>
+        <div class="inner-content">
+            <form action="/venues/update/{{ venue.venue_id }}" method="post" onsubmit="return confirmUpdate()">
+                <label for="venue_name">Venue Name:</label>
+                <input type="text" id="venue_name" name="venue_name" value="{{ venue.venue_name }}">
+
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" value="{{ venue.location }}">
+
+                <label for="capacity">Capacity:</label>
+                <input type="number" id="capacity" name="capacity" value="{{ venue.capacity }}">
+
+                <input type="submit" value="Update Record">
+            </form>
+        </div>
+    </div>
 
     <script>
         function confirmUpdate() {

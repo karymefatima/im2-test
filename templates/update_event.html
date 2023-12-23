@@ -2,26 +2,118 @@
 <html>
 <head>
     <title>Update Event</title>
+    <style>
+        /* Add the CSS styles from the previous code */
+        :root {
+            --container-width: 600px;
+            --container-height: 100vh;
+            --border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            color: #05014a;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: var(--container-height);
+            font-family: 'Roboto', sans-serif;
+            background-image: url('https://i.pinimg.com/originals/f3/4d/e2/f34de2bce91c6596f9ec1a93ee44b86f.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Make the background slightly transparent */
+            background-color: rgba(255, 255, 255, 0.50); /* Adjust the alpha (fourth value) to set transparency */
+        }
+
+        .custom-container {
+            background-color: white;
+            width: 300px;
+            height: 460px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); /* Adding box shadow */
+            text-align: center; /* Center the content horizontally */
+            border-radius: var(--border-radius);
+        }
+
+        .inner-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 80%;
+        }
+
+        .inner-content label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .inner-content input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            border:.5px solid rgb(186, 186, 186);
+            border-radius: 5px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            width: 70%;
+            margin-top: 15px;
+            background-color: #05014a;
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 25px;
+            outline: none;
+            box-shadow: none;
+        }
+
+        select {
+            border: none;
+            border-radius: 0.25rem;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            outline: none;
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.5);
+            border-color: #3b82f6;
+        }
+
+    </style>
 </head>
 <body>
-    <form action="/events/update/{{ event.event_id }}" method="post" onsubmit="return confirmUpdate()">
-        <label for="event_name">Event Name:</label><br>
-        <input type="text" id="event_name" name="event_name" value="{{ event.event_name }}"><br>
-        <label for="event_date">Event Date:</label><br>
-        <input type="date" id="event_date" name="event_date" value="{{ event.event_date }}"><br>
+    <div class="custom-container">
+        <h1 class="update-title">Update Event</h1>
+        <div class="inner-content">
+            <form action="/events/update/{{ event.event_id }}" method="post" onsubmit="return confirmUpdate()">
+                <label for="event_name">Event Name:</label><br>
+                <input type="text" id="event_name" name="event_name" value="{{ event.event_name }}"><br>
+                <label for="event_date">Event Date:</label><br>
+                <input type="date" id="event_date" name="event_date" value="{{ event.event_date }}"><br>
+                
+                <label for="venue_id">Venue:</label><br>
+                    <select id="venue_id" name="venue_id" required>
+                        <!-- options in Javascript-->
+                    </select><br>
 
-        <label for="venue_id">Venue:</label><br>
-        <select id="venue_id" name="venue_id" required>
-             <!-- options in Javascript-->
-        </select><br>
-
-        <label for="organizer_id">Organizer:</label><br>
-        <select id="organizer_id" name="organizer_id" required>
-            <!-- options in Javascript-->
-        </select><br>
-
-        <input type="submit" value="Update Record">
-    </form>
+                <label for="organizer_id">Organizer:</label><br>
+                    <select id="organizer_id" name="organizer_id" required>
+                        <!-- options in Javascript-->
+                    </select><br>
+                <input type="submit" value="Update Record">
+            </form>
+        </div>
+    </div>
 
     <script>
         function confirmUpdate() {
@@ -29,50 +121,55 @@
         }
     </script>
 
-<script>
-    fetch('/venuesjson')
-    .then(response => response.json())
-    .then(venues => {
-        const venueSelect = document.getElementById('venue_id');
-        const currentVenueName = "{{ event.venue_name }}";
+    <script>
+        function fillVenueOptions() {
+        fetch('/venuesjson')
+        .then(response => response.json())
+        .then(venues => {
+            const venueSelect = document.getElementById('venue_id');
+            const currentVenueName = "{{ event.venue_name }}";
 
-        venues.forEach(venue => {
-            const option = document.createElement('option');
-            option.value = venue.venue_id;
-            option.text = venue.venue_name;
+            venues.forEach(venue => {
+                const option = document.createElement('option');
+                option.value = venue.venue_id;
+                option.text = venue.venue_name;
 
-            if (venue.venue_name === currentVenueName) {
-                option.selected = true;
-            }
+                if (venue.venue_name === currentVenueName) {
+                    option.selected = true;
+                }
 
-            venueSelect.appendChild(option);
+                venueSelect.appendChild(option);
+            });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
         });
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+    }
 
-fetch('/organizersjson')
-    .then(response => response.json())
-    .then(organizers => {
-        const organizerSelect = document.getElementById('organizer_id');
-        const currentOrganizerName = "{{ event.organizer_name }}";
+    function fillOrganizerOptions() {
+    fetch('/organizersjson')
+        .then(response => response.json())
+        .then(organizers => {
+            const organizerSelect = document.getElementById('organizer_id');
+            const currentOrganizerName = "{{ event.organizer_name }}";
 
-        organizers.forEach(organizer => {
-            const option = document.createElement('option');
-            option.value = organizer.organizer_id;
-            option.text = organizer.name;
+            organizers.forEach(organizer => {
+                const option = document.createElement('option');
+                option.value = organizer.organizer_id;
+                option.text = organizer.name;
 
-            if (organizer.name === currentOrganizerName) {
-                option.selected = true;
-            }
+                if (organizer.name === currentOrganizerName) {
+                    option.selected = true;
+                }
 
-            organizerSelect.appendChild(option);
+                organizerSelect.appendChild(option);
+            });
         });
-    });
+    }
 
-</script>
-
-
+        // Initial fill for options when the page loads
+		fillVenueOptions();
+		fillOrganizerOptions();
+    </script>
 </body>
 </html>

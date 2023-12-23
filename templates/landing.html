@@ -2,67 +2,62 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400&display=swap" rel="stylesheet">
+
     <style>
         .carousel {
-            margin-left: 15%;
-            margin-right: 15%;
-            max-width: full; /* Set a maximum width for the carousel */
-            margin: 0 auto; /* Center the carousel */
+            overflow: hidden;
+            position: relative;
         }
 
-        ul.slides {
-            display: block;
-            position: relative;
-            height: 800px; /* Set the height of the carousel */
+        .slides {
+            list-style-type: none;
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            list-style: none;
-        }
-
-        .slides * {
-            user-select: none;
-            -ms-user-select: none;
-            -moz-user-select: none;
-            -khtml-user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
+            transition: transform 0.5s ease-in-out;
+            display: flex;
+            width: 100%;
         }
 
         .slide-container {
-            display: block;
+            min-width: 100%;
+            height: 65vh;
+            box-sizing: border-box;
         }
 
         .slide-image {
-            display: block;
-            position: absolute;
             width: 100%;
             height: 100%;
-            top: 0;
-            opacity: 0;
-            transition: all .7s ease-in-out;
-        }
-
-        .slide-image img {
-            width: auto;
-            min-width: 100%;
-            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            /* Reset margin */
+            padding: 0;
+            /* Reset padding */
+            box-sizing: border-box;
+            /* Include padding and border in the element's total width and height */
         }
 
         .carousel-controls {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 999;
-            font-size: 40px; /* Adjust the font size of the controls */
-            line-height: 300px; /* Adjust the line height of the controls */
-            color: #fff;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .prev-slide,
+        .next-slide {
+            cursor: pointer;
         }
 
         .carousel-controls label {
@@ -70,11 +65,11 @@
             position: absolute;
             padding: 0 20px;
             opacity: 0;
-            transition: opacity .2s;
+            transition: opacity 0.2s;
             cursor: pointer;
         }
 
-        .slide-image:hover + .carousel-controls label {
+        .slide-image:hover+.carousel-controls label {
             opacity: 0.5;
         }
 
@@ -82,10 +77,14 @@
             opacity: 1;
         }
 
-        .carousel-controls .prev-slide,
+        .carousel-controls .prev-slide {
+            width: 100%;
+            text-align: left;
+        }
+
         .carousel-controls .next-slide {
             width: 100%;
-            text-align: center; /* Center the controls */
+            text-align: right;
         }
 
         .carousel-dots {
@@ -99,236 +98,487 @@
 
         .carousel-dots .carousel-dot {
             display: inline-block;
-            width: 15px; /* Adjust the size of the dots */
-            height: 15px; /* Adjust the size of the dots */
+            width: 15px;
+            /* Adjust the size of the dots */
+            height: 15px;
+            /* Adjust the size of the dots */
             border-radius: 50%;
             background-color: #fff;
             opacity: 0.5;
             margin: 10px;
         }
 
-        input:checked + .slide-container .slide-image {
+        input:checked+.slide-container .slide-image {
             opacity: 1;
             transform: scale(1);
             transition: opacity 1s ease-in-out;
         }
 
-        input:checked + .slide-container .carousel-controls label {
+        input:checked+.slide-container .carousel-controls label {
             display: block;
         }
 
-        input#img-1:checked ~ .carousel-dots label#img-dot-1,
-        input#img-2:checked ~ .carousel-dots label#img-dot-2,
-        input#img-3:checked ~ .carousel-dots label#img-dot-3 {
+        input#img-1:checked~.carousel-dots label#img-dot-1,
+        input#img-2:checked~.carousel-dots label#img-dot-2,
+        input#img-3:checked~.carousel-dots label#img-dot-3 {
             opacity: 1;
         }
 
-        input:checked + .slide-container .nav label {
+        input:checked+.slide-container .nav label {
             display: block;
+        }
+
+        .slide-container .text-overlay {
+            color: #fff;
+            font-size: 24px;
+            text-align: left;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            /* Added for z-index to work */
+            z-index: 1;
+            /* Ensure text appears on top of the overlay */
+        }
+
+        .testimonial-card {
+            perspective: 1000px;
+        }
+
+        .testimonial-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            /* Adjust shadow intensity as needed */
+        }
+
+        h1 {
+            font-family: 'El Messiri', sans-serif;
+            font-weight: 700;
+        }
+
+        p {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 400;
+            /* Regular weight */
+            /* Add any other styles you want for paragraphs */
         }
     </style>
 </head>
-<body class="font-sans bg-gray-100">
 
+<body class="font-roboto bg-gray-100">
     <nav class="bg-white shadow dark:bg-gray-800">
-        <div class="container flex items-center justify-center p-12 mx-auto text-gray-600 capitalize dark:text-gray-300">
-        <a class="text-black text-lg font-bold mr-32" href="#">Event Management System</a>
-        <div class="flex items-center justify-end">
-            <a class="text-gray-800 dark:text-gray-200 border-b-2 border-blue-500 mx-1.5 sm:mx-6" href="/">Home</a>
-            <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6" href="/organizersui">Organizers</a>
-            <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6" href="/venues">Venues</a>
-            <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6" href="/events">Events</a>
-            <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6" href="/attendees">Attendees</a>
+        <div
+            class="container flex items-center justify-center p-12 mx-auto text-gray-600 capitalize dark:text-gray-300">
+            <a href="#" class="mr-4"><img src="https://i.ibb.co/Dkjqnzm/Brand-initial-Simple-Logo-1.png"
+                    alt="Brand-initial-Simple-Logo-1" width="200" height="200"></a>
+            <div class="flex items-center justify-end">
+                <a class="text-gray-800 dark:text-gray-200 border-b-2 border-blue-900 mx-1.5 sm:mx-6" href="/">Home</a>
+                <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-900 mx-1.5 sm:mx-6"
+                    href="/organizers">Organizers</a>
+                <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-900 mx-1.5 sm:mx-6"
+                    href="/venues">Venues</a>
+                <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-900 mx-1.5 sm:mx-6"
+                    href="/events">Events</a>
+                <a class="border-b-2 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-blue-900 mx-1.5 sm:mx-6"
+                    href="/attendees">Attendees</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="carousel">
-    <ul class="slides">
-        <input type="radio" name="radio-buttons" id="img-1" checked />
-        <li class="slide-container">
-            <div class="slide-image">
-                <img src="https://1.bp.blogspot.com/--aPWEJ3zlEY/XQpgnn95FUI/AAAAAAAAACk/XOBQZTmRBagMRRnAf_WjEx8D8s0vMnWTQCLcBGAs/s1600/Dummy_EVENTS.png">
-            </div>
-            <div class="carousel-controls">
-                <label for="img-3" class="prev-slide">
-                    <span>&lsaquo;</span>
-                </label>
-                <label for="img-2" class="next-slide">
-                    <span>&rsaquo;</span>
-                </label>
-            </div>
-        </li>
-        <input type="radio" name="radio-buttons" id="img-2" />
-        <li class="slide-container">
-            <div class="slide-image">
-                <img src="https://www.hipswing.co.uk/wp-content/uploads/hire-lighting.jpg">
-            </div>
-            <div class="carousel-controls">
-                <label for="img-1" class="prev-slide">
-                    <span>&lsaquo;</span>
-                </label>
-                <label for="img-3" class="next-slide">
-                    <span>&rsaquo;</span>
-                </label>
-            </div>
-        </li>
-        <input type="radio" name="radio-buttons" id="img-3" />
-        <li class="slide-container">
-            <div class="slide-image">
-                <img src="https://flowersbycina.com/wp-content/uploads/2020/08/Flowers-by-Cina-ValerieKenny-CottonLoveStudios-5-1-e1598398590789.jpg">
-            </div>
-            <div class="carousel-controls">
-                <label for="img-2" class="prev-slide">
-                    <span>&lsaquo;</span>
-                </label>
-                <label for="img-1" class="next-slide">
-                    <span>&rsaquo;</span>
-                </label>
-            </div>
-        </li>
-        <div class="carousel-dots">
-            <label for="img-1" class="carousel-dot" id="img-dot-1"></label>
-            <label for="img-2" class="carousel-dot" id="img-dot-2"></label>
-            <label for="img-3" class="carousel-dot" id="img-dot-3"></label>
-        </div>
-    </ul>
-</div>
-
-<div class="container flex flex-row justify-between mx-auto w-full gap-8">
-    <div class="mt-12 text-left">
-        <h2 class="flex items-center justify-start text-2xl font-bold mb-4 text-left">Testimonials</h2>
-
-        <div class="flex items-center justify-start flex-col w-full" >
-            <!-- Testimonial 1 -->
-            <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-                <p class="text-gray-800">"The Event Management System made our events smoother and more organized. Highly recommended!"</p>
-                <p class="text-gray-600 mt-2">- John Doe, Event Organizer</p>
-            </div>
-
-            <!-- Testimonial 2 -->
-            <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-                <p class="text-gray-800">"Efficient, user-friendly, and powerful. This system transformed the way we handle events."</p>
-                <p class="text-gray-600 mt-2">- Jane Smith, Event Coordinator</p>
-            </div>
-             <!-- Testimonial 2 -->
-             <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-                <p class="text-gray-800">"Efficient, user-friendly, and powerful. This system transformed the way we handle events."</p>
-                <p class="text-gray-600 mt-2">- Jane Smith, Event Coordinator</p>
-            </div>
-             <!-- Testimonial 2 -->
-             <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-                <p class="text-gray-800">"Efficient, user-friendly, and powerful. This system transformed the way we handle events."</p>
-                <p class="text-gray-600 mt-2">- Jane Smith, Event Coordinator</p>
-            </div>
-            <!-- Testimonial 2 -->
-            <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-                <p class="text-gray-800">"Efficient, user-friendly, and powerful. This system transformed the way we handle events."</p>
-                <p class="text-gray-600 mt-2">- Jane Smith, Event Coordinator</p>
-            </div>
-             
-        </div>
+    <div class="carousel">
+        <ul class="slides">
+            <li class="slide-container">
+                <div class="slide-image"
+                    style="background-image: url(https://1.bp.blogspot.com/--aPWEJ3zlEY/XQpgnn95FUI/AAAAAAAAACk/XOBQZTmRBagMRRnAf_WjEx8D8s0vMnWTQCLcBGAs/s1600/Dummy_EVENTS.png)">
+                </div>
+            </li>
+            <li class="slide-container">
+                <div class="slide-image"
+                    style="background-image: url(https://www.hipswing.co.uk/wp-content/uploads/hire-lighting.jpg)">
+                </div>
+            </li>
+            <li class="slide-container">
+                <div class="slide-image"
+                    style="background-image: url(https://www.josemelgarejo.com/wp-content/uploads/2020/07/brooklyn-botanic-garden-wedding-jose-melgarejo_43.jpg)">
+                </div>
     </div>
 
-    <div class="container mx-auto flex flex-col items-center mt-12">
+    <div class="container flex flex-col justify-between mx-auto w-full gap-8 mt-8">
+        <div class="grid sm:grid-cols-1 md:grid-cols-3 mt-16 mb-8 gap-28 md:gap-16 ml-32">
+            <div
+                class="flex flex-col gap-4 items-start group hover:bg-slate-50 hover:border-slate-100 border border-transparent rounded-lg transition-all md:-m-5 p-5">
+                <div
+                    class="mt-1 bg-indigo-50 border shadow shadow-indigo-100/50 border-indigo-100 transition-colors rounded-lg grid place-items-center  p-2 w-16 h-16 shrink-0">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#05014a">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M7 2a1 1 0 0 0-1 1v1.001c-.961.014-1.34.129-1.721.333a2.272 2.272 0 0 0-.945.945C3.116 5.686 3 6.09 3 7.205v10.59c0 1.114.116 1.519.334 1.926.218.407.538.727.945.945.407.218.811.334 1.926.334h11.59c1.114 0 1.519-.116 1.926-.334.407-.218.727-.538.945-.945.218-.407.334-.811.334-1.926V7.205c0-1.115-.116-1.519-.334-1.926a2.272 2.272 0 0 0-.945-.945C19.34 4.13 18.961 4.015 18 4V3a1 1 0 1 0-2 0v1H8V3a1 1 0 0 0-1-1zM5 9v8.795c0 .427.019.694.049.849.012.06.017.074.049.134a.275.275 0 0 0 .124.125c.06.031.073.036.134.048.155.03.422.049.849.049h11.59c.427 0 .694-.019.849-.049a.353.353 0 0 0 .134-.049.275.275 0 0 0 .125-.124.353.353 0 0 0 .048-.134c.03-.155.049-.422.049-.849L19.004 9H5zm8.75 4a.75.75 0 0 0-.75.75v2.5c0 .414.336.75.75.75h2.5a.75.75 0 0 0 .75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5z"
+                                fill="#05014a"></path>
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl mb-2">Event Organization</h1>
+                    <p> Plan and manage events seamlessly with our intuitive organizer, ensuring a successful and
+                        streamlined execution. </p>
+                </div>
+            </div>
+            <div
+                class="flex flex-col gap-4 items-start group hover:bg-slate-50 hover:border-slate-100 border border-transparent rounded-lg transition-all md:-m-5 p-5">
+                <div
+                    class="mt-1 bg-indigo-50 border shadow shadow-indigo-100/50 border-indigo-100 transition-colors rounded-lg grid place-items-center  p-2 w-16 h-16 shrink-0">
+                    <svg fill="#05014a" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 296.999 296.999" xml:space="preserve">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <path
+                                    d="M141.914,185.802c1.883,1.656,4.234,2.486,6.587,2.486c2.353,0,4.705-0.83,6.587-2.486 c2.385-2.101,58.391-52.021,58.391-103.793c0-35.842-29.148-65.002-64.977-65.002c-35.83,0-64.979,29.16-64.979,65.002 C83.521,133.781,139.529,183.701,141.914,185.802z M148.501,65.025c9.302,0,16.845,7.602,16.845,16.984 c0,9.381-7.543,16.984-16.845,16.984c-9.305,0-16.847-7.604-16.847-16.984C131.654,72.627,139.196,65.025,148.501,65.025z">
+                                </path>
+                                <path
+                                    d="M273.357,185.773l-7.527-26.377c-1.222-4.281-5.133-7.232-9.583-7.232h-53.719c-1.942,2.887-3.991,5.785-6.158,8.699 c-15.057,20.23-30.364,33.914-32.061,35.41c-4.37,3.848-9.983,5.967-15.808,5.967c-5.821,0-11.434-2.117-15.81-5.969 c-1.695-1.494-17.004-15.18-32.06-35.408c-2.167-2.914-4.216-5.813-6.158-8.699h-53.72c-4.45,0-8.361,2.951-9.583,7.232 l-8.971,31.436l200.529,36.73L273.357,185.773z">
+                                </path>
+                                <path
+                                    d="M296.617,267.291l-19.23-67.396l-95.412,80.098h105.06c3.127,0,6.072-1.467,7.955-3.963 C296.873,273.533,297.474,270.297,296.617,267.291z">
+                                </path>
+                                <path
+                                    d="M48.793,209.888l-30.44-5.576L0.383,267.291c-0.857,3.006-0.256,6.242,1.628,8.738c1.883,2.496,4.828,3.963,7.955,3.963 h38.827V209.888z">
+                                </path>
+                                <polygon points="62.746,212.445 62.746,279.992 160.273,279.992 208.857,239.207 ">
+                                </polygon>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl mb-2">Venue Management</h1>
+                    <p> Effortlessly add and manage venues, enhancing event planning with centralized information on
+                        capacity, amenities, and availability. </p>
+                </div>
+            </div>
+            <div
+                class="flex flex-col gap-4 items-start group hover:bg-slate-50 hover:border-slate-100 border border-transparent rounded-lg transition-all md:-m-5 p-5">
+                <div
+                    class="mt-1 bg-indigo-50 border shadow shadow-indigo-100/50 border-indigo-100 transition-colors rounded-lg grid place-items-center  p-2 w-16 h-16 shrink-0">
+                    <svg viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#05014a">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path fill="#05014a"
+                                d="M36.31,176c0.674,0.386 24.255,13.789 43.69,13.789c19.435,0 43.826,-13.403 44.524,-13.789l9.047,0c14.641,0.044 26.429,11.859 26.429,26.429l0,101.571c0,17.673 -14.327,32 -32,32l0,120c0,13.255 -10.745,24 -24,24l-48,0c-13.255,0 -24,-10.745 -24,-24l0,-120c-17.673,0 -32,-14.327 -32,-32l0,-100.738c0,-15.028 12.16,-27.216 27.262,-27.262l9.048,0Zm176,0c0.674,0.386 24.256,13.789 43.69,13.789c19.434,0 43.826,-13.403 44.524,-13.789l9.047,0c14.641,0.044 26.429,11.859 26.429,26.429l0,101.571c0,17.673 -14.327,32 -32,32l0,120c0,13.255 -10.745,24 -24,24l-48,0c-13.255,0 -24,-10.745 -24,-24l0,-120c-17.673,0 -32,-14.327 -32,-32l0,-100.738c0,-15.028 12.16,-27.216 27.262,-27.262l9.048,0Zm243.69,304l-48,0c-13.255,0 -24,-10.745 -24,-24l0,-120c-17.673,0 -32,-14.327 -32,-32l0,-100.738c0,-15.056 12.206,-27.262 27.262,-27.262l9.048,0c0,0 23.978,13.789 43.69,13.789c19.712,0 44.524,-13.789 44.524,-13.789l9.047,0c14.597,0 26.429,11.832 26.429,26.429l0,101.571c0,17.673 -14.327,32 -32,32l0,120c0,13.222 -10.691,23.946 -24,24Zm-376,-320c35.346,0 64,-28.654 64,-64c0,-35.346 -28.654,-64 -64,-64c-35.346,0 -64,28.654 -64,64c0,35.346 28.654,64 64,64Zm176,0c35.346,0 64,-28.654 64,-64c0,-35.346 -28.654,-64 -64,-64c-35.346,0 -64,28.654 -64,64c0,35.346 28.654,64 64,64Zm240,-64c0,35.346 -28.654,64 -64,64c-35.346,0 -64,-28.654 -64,-64c0,-35.346 28.654,-64 64,-64c35.346,0 64,28.654 64,64Z">
+                            </path>
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl mb-2">Attendee Management</h1>
+                    <p> Seamlessly handle attendee details and registrations, ensuring a personalized and engaging
+                        experience for all participants.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-left mb-12">
+            <h1 class="flex items-center justify-start text-5xl font-bold mb-4 text-left">
+                Testimonials
+            </h1>
+
+            <div class="grid sm:grid-cols-1 md:grid-cols-3 mt-8 gap-6">
+                <!-- Testimonial 1 -->
+                <div
+                    class="testimonial-card bg-white p-8 rounded-lg shadow-md mb-4 transition-transform transform hover:scale-105 hover:rotate-3d">
+                    <p class="text-gray-800">
+                        "The Event Management System made our events
+                        smoother and more organized. Highly recommended!"
+                    </p>
+                    <p class="text-gray-600 mt-2">
+                        - John Doe, Event Organizer
+                    </p>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div
+                    class="testimonial-card bg-white p-8 rounded-lg shadow-md mb-4 transition-transform transform hover:scale-105">
+                    <p class="text-gray-800">
+                        "Efficient, user-friendly, and powerful. This system
+                        transformed the way we handle events."
+                    </p>
+                    <p class="text-gray-600 mt-2">
+                        - Jane Smith, Event Coordinator
+                    </p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div
+                    class="testimonial-card bg-white p-8 rounded-lg shadow-md mb-4 transition-transform transform hover:scale-105">
+                    <p class="text-gray-800">
+                        "We experienced a significant improvement in our event planning workflow with the Event
+                        Management System. It's a game-changer!"
+                    </p>
+                    <p class="text-gray-600 mt-2">
+                        - Michael Johnson, Event Planner
+                    </p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div
+                    class="testimonial-card bg-white p-8 rounded-lg shadow-md mb-4 transition-transform transform hover:scale-105">
+                    <p class="text-gray-800">
+                        "The features and flexibility of this system exceeded our expectations. It's a must-have for
+                        anyone involved in event management."
+                    </p>
+                    <p class="text-gray-600 mt-2">
+                        - Emily White, Conference Organizer
+                    </p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div
+                    class="testimonial-card bg-white p-8 rounded-lg shadow-md mb-4 transition-transform transform hover:scale-105">
+                    <p class="text-gray-800">
+                        "As an event coordinator, I've used many systems, but this one stands out. It's intuitive,
+                        reliable, and has saved us time and effort."
+                    </p>
+                    <p class="text-gray-600 mt-2">
+                        - Sarah Thompson, Event Specialist
+                    </p>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div
+                    class="testimonial-card bg-white p-8 rounded-lg shadow-md mb-4 transition-transform transform hover:scale-105">
+                    <p class="text-gray-800">
+                        "The Event Management System exceeded our expectations!
+                        It simplified the entire event planning process and provided
+                        us with valuable insights. Truly a game-changer!"
+                    </p>
+                    <p class="text-gray-600 mt-2">
+                        - Sarah Johnson, Event Manager
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- About Us Section -->
+    <section class="py-16 mt-12" style="background-color: #05014a">
+        <div class="container mx-auto">
+            <h1 class="text-6xl font-bold mb-16 text-center text-white font-roboto">
+                Our Team
+            </h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Person 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <img src="https://i.ibb.co/nMKB7Qs/372292143-1001991497787536-3339726607820700202-n.jpg"
+                        alt="Person 1" class="w-24 h-24 mx-auto mb-4 rounded-full" />
+                    <h1 class="text-2xl  font-bold mb-2">Kerch Cabo</h1>
+                    <p class="text-gray-600">Developer</p>
+                    <p class="text-gray-800 mt-2">
+                        Experienced developer with a passion for coding and problem-solving. Enjoys exploring new
+                        technologies and sipping on a good cup of coffee.
+                    </p>
+                </div>
+
+                <!-- Person 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <img src="https://i.ibb.co/XW7QTRd/368658879-857479218825036-2229079445952761998-n.jpg"
+                        alt="368658879-857479218825036-2229079445952761998-n" alt="Person 2"
+                        class="w-24 h-24 mx-auto mb-4 rounded-full" />
+                    <h1 class="text-2xl font-bold mb-2">
+                        Karyme Fatima Crisologo
+                    </h1>
+                    <p class="text-gray-600">Lead Developer</p>
+                    <p class="text-gray-800 mt-2">
+                        Innovative Lead Developer guiding the team with technical expertise. Enthusiastic about
+                        exploring the intersection of technology and creativity.
+                    </p>
+                </div>
+
+                <!-- Person 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <img src="https://i.ibb.co/GF7hjJ0/showa.jpg" alt="Person 3"
+                        class="w-24 h-24 mx-auto mb-4 rounded-full" />
+                    <h1 class="text-2xl font-bold mb-2">
+                        Joshua Jhonn Borres
+                    </h1>
+                    <p class="text-gray-600">UX Designer</p>
+                    <p class="text-gray-800 mt-2">
+                        UX Design maestro creating visually stunning and user-friendly interfaces. Finds inspiration in
+                        art, nature, and travel.
+                    </p>
+                </div>
+
+                <!-- Person 4 -->
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <img src="https://scontent.fceb6-1.fna.fbcdn.net/v/t39.30808-6/361670302_1971351803225865_6379742531004083781_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=9c7eae&_nc_eui2=AeEVlkd022Y_N1H4pCfKoHwcxDOxu7KNsMjEM7G7so2wyIqJEvfd_Xccvskm1T_tsdoHStEuKJ3EtTgVL_VjvPKk&_nc_ohc=OZsBG42kOPQAX-IUg-V&_nc_ht=scontent.fceb6-1.fna&oh=00_AfAbo3a6vfP9sRzLfVz3ZfALLXxAcKSFXh6iJylf8NhoNw&oe=6587C013"
+                        alt="Person 4" class="w-24 h-24 mx-auto mb-4 rounded-full" />
+                    <h1 class="text-2xl font-bold mb-2">Marc Baguion</h1>
+                    <p class="text-gray-600">Developer</p>
+                    <p class="text-gray-800 mt-2">
+                        Dedicated developer focused on clean code and problem-solving. Enjoys staying updated on the
+                        latest tech trends and playing video games.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mx-auto flex flex-col items-center mt-16 mb-8">
         <!-- Contact Form -->
-        <div class="w-11/12  bg-white rounded-lg p-8 shadow-md mb-8">
-            <h2 class="text-2xl font-bold mb-4">Contact Us</h2>
+        <div class="w-11/12 bg-white rounded-lg p-8 shadow-md mb-8 mt-8 border border-solid border-blue-900 border-4">
+
             <form action="#" method="post" class="flex flex-col">
-                <label for="name" class="mb-2">Your Name:</label>
-                <input type="text" id="name" name="name" class="border p-2 mb-4" required>
-    
-                <label for="email" class="mb-2">Your Email:</label>
-                <input type="email" id="email" name="email" class="border p-2 mb-4" required>
-    
-                <label for="message" class="mb-2">Your Message:</label>
-                <textarea id="message" name="message" rows="4" class="border p-2 mb-4" required></textarea>
-    
-                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Send Message</button>
+                <div class="flex flex-row">
+                    <div class="flex flex-col w-6/12">
+                        <h1 class="text-3xl font-bold mb-4">Contact Us</h1>
+                        <label for="name" class="mb-2">Your Name:</label>
+                        <input type="text" id="name" name="name" class="border p-2 mb-4" required />
+
+                        <label for="email" class="mb-2">Your Email:</label>
+                        <input type="email" id="email" name="email" class="border p-2 mb-4" required />
+
+                        <label for="message" class="mb-2">Your Message:</label>
+                        <textarea id="message" name="message" rows="4" class="border p-2 mb-4" required></textarea>
+
+
+                        <button type="submit" class="font-bold py-2 px-4 border rounded-full w-full mt-2 text-white"
+                            style="background-color: #05014a">
+                            Send Message
+                        </button>
+
+                    </div>
+                    <div class="flex-1 bg-cover bg-no-repeat bg-left ml-8 " style="
+					background-image: url('https://vantagepointrecovery.com/wp-content/uploads/2020/05/bigstock-Helping-Hand-1682222-1024x768.jpg');
+					background-size: 100%;
+                    border-radius: 15px;
+				"></div>
+                </div>
             </form>
         </div>
-    
+
         <!-- Get Started Section -->
-        <div class="w-11/12 h-full md:h-5/6 bg-blue-500 text-white rounded-lg p-8 shadow-md mb-8">
-            <h2 class="text-2xl font-bold mb-4">Get Started Today!</h2>
-            <p class="mb-4">Ready to streamline your event management? Get started with our powerful system today!</p>
-            <a href="#" class="bg-white text-blue-500 py-2 px-4 rounded-full">Sign Up Now</a>
+        <div class="w-11/12 h-full md:h-5/6 bg-blue-500 text-white rounded-lg p-8 shadow-md mb-8"
+            style="background-color: #05014a">
+            <h1 class="text-4xl font-bold mb-4">Get Started Today!</h1>
+            <p class="mb-4">
+                Ready to streamline your event management? Get started
+                with our powerful system today!
+            </p>
+            <a href="#"
+                class="bg-white hover:bg-blue-100 text-blue-500 font-bold py-2 px-4 border rounded-full w-full mt-2"
+                style="border-color: #05014a; color: #05014a">
+                Sign Up Now!</a>
         </div>
     </div>
-    </div>
 
-<!-- Foooter -->
-<section class="bg-white mt-16">
-    <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
-        <nav class="flex flex-wrap justify-center -mx-5 -my-2">
-            <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    About
+    <!-- Foooter -->
+    <section class="bg-white">
+        <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
+            <nav class="flex flex-wrap justify-center -mx-5 -my-2">
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                        About
+                    </a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                        Blog
+                    </a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                        Team
+                    </a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                        Pricing
+                    </a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                        Contact
+                    </a>
+                </div>
+                <div class="px-5 py-2">
+                    <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                        Terms
+                    </a>
+                </div>
+            </nav>
+            <div class="flex justify-center mt-8 space-x-6">
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Facebook</span>
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd"
+                            d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Instagram</span>
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd"
+                            d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Twitter</span>
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                        </path>
+                    </svg>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">GitHub</span>
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd"
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Dribbble</span>
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd"
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
+                            clip-rule="evenodd"></path>
+                    </svg>
                 </a>
             </div>
-            <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Blog
-                </a>
-            </div>
-            <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Team
-                </a>
-            </div>
-            <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Pricing
-                </a>
-            </div>
-            <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Contact
-                </a>
-            </div>
-            <div class="px-5 py-2">
-                <a href="#" class="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Terms
-                </a>
-            </div>
-        </nav>
-        <div class="flex justify-center mt-8 space-x-6">
-            <a href="#" class="text-gray-400 hover:text-gray-500">
-                <span class="sr-only">Facebook</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-500">
-                <span class="sr-only">Instagram</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-500">
-                <span class="sr-only">Twitter</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
-                </svg>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-500">
-                <span class="sr-only">GitHub</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-500">
-                <span class="sr-only">Dribbble</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
+            <p class="mt-8 text-base leading-6 text-center text-gray-400">
+                © 2023 CSIT327 Planorama. All rights reserved.
+            </p>
         </div>
-        <p class="mt-8 text-base leading-6 text-center text-gray-400">
-            © 2023 CSIT321 Event Management System. All rights reserved.
-        </p>
-    </div>
-</section>
+    </section>
 
+    <script>
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            const slides = document.querySelector('.slides');
+            const slideWidth = document.querySelector('.slide-container').offsetWidth;
+            slides.style.transform = `translateX(-${index * slideWidth}px)`;
+            currentIndex = index;
+        }
+
+        function nextSlide() {
+            const totalSlides = document.querySelectorAll('.slide-container').length;
+            currentIndex = (currentIndex + 1) % totalSlides;
+            showSlide(currentIndex);
+        }
+
+        function prevSlide() {
+            const totalSlides = document.querySelectorAll('.slide-container').length;
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            showSlide(currentIndex);
+        }
+        setInterval(() => {
+            nextSlide();
+        }, 3000);
+    </script>
 </body>
+
 </html>

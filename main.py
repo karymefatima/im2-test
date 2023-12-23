@@ -27,7 +27,7 @@ set_mysql(mysql)
 
 @app.route("/")
 def home():
-  return jsonify({"message": "Hello, CSIT327!"})
+  return render_template('landing.html')
 
 @app.route("/users", methods=["GET", "POST"])
 def users():

@@ -1,16 +1,103 @@
-<form action="/organizers/update/{{ organizer.organizer_id }}" method="post" onsubmit="return confirmUpdate()">
-    <label for="name">Name:</label><br>
-    <input type="text" id="name" name="name" value="{{ organizer.name }}"><br>
-    <label for="email">Email:</label><br>
-    <input type="text" id="email" name="email" value="{{ organizer.email }}"><br>
-    <label for="contact_number">Contact Number:</label><br>
-    <input type="text" id="contact_number" name="contact_number" value="{{ organizer.contact_number }}"><br>
-    <input type="submit" value="Update Record">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Organizer</title>
+    <style>
+        :root {
+            --container-width: 600px;
+            --container-height: 100vh;
+            --border-radius: 10px;
+        }
 
-<script>
-    function confirmUpdate() {
-        return confirm("Are you sure you want to save changes?");
-    }
-</script>
+        h1 {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            color: #05014a;
+        }
 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: var(--container-height);
+            font-family: 'Roboto', sans-serif;
+            background-image: url('https://d9s1543upwp3n.cloudfront.net/wp-content/uploads/2020/11/shutterstock_551810083-1.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* Make the background slightly transparent */
+            background-color: rgba(255, 255, 255, 0.9); /* Adjust the alpha (fourth value) to set transparency */
+        }
+
+        .custom-container {
+            background-color: white;
+            width: 300px;
+            height: 350px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75); /* Adding box shadow */
+            text-align: center; /* Center the content horizontally */
+            border-radius: var(--border-radius);
+        }
+
+        .inner-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 80%;
+        }
+
+        .inner-content label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .inner-content input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            border:.5px solid rgb(186, 186, 186);
+            border-radius: 5px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            width: 70%;
+            margin-top: 15px;
+            background-color: #05014a;
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 25px;
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-container">
+        <h1 class="update-title">Update Organizer</h1>
+        <div class="inner-content">
+            <form action="/organizers/update/{{ organizer.organizer_id }}" method="post" onsubmit="return confirmUpdate()">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{ organizer.name }}">
+
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" value="{{ organizer.email }}">
+
+                <label for="contact_number">Contact Number:</label>
+                <input type="text" id="contact_number" name="contact_number" value="{{ organizer.contact_number }}">
+
+                <input type="submit" value="Update Record">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function confirmUpdate() {
+            return confirm("Are you sure you want to save changes?");
+        }
+    </script>
+</body>
+</html>
